@@ -3,7 +3,7 @@ import { CreateConnectorDTO } from '@/application/dtos/connector/create-connecto
 import { ConnectorRepository } from '@/application/repositories/connector.repository';
 import { CONNECTOR_REPOSITORY } from '@/application/tokens';
 import { Connector } from '@/domain/entities/connector';
-import { generateID } from '@/infrastructure/utils/StringUtils';
+import { generateID } from '@/shared/utils/StringUtils';
 
 @Injectable()
 export class CreateConnectorUseCase {

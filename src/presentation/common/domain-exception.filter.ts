@@ -10,12 +10,28 @@ import { DomainError } from '@/base/error';
 @Catch(DomainError)
 export class DomainExceptionFilter implements ExceptionFilter {
   catch(exception: DomainError, host: ArgumentsHost): void {
+    if (host.getType() !== 'http') {
+      this.handleNonHttp(exception, host);
+      return;
+    }
+
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
     const status = this.resolveStatus(exception);
 
     response.status(status).json({
       statusCode: status,
+      code: exception.code,
+      message: exception.message,
+    });
+  }
+
+  private handleNonHttp(exception: DomainError, host: ArgumentsHost): void {
+    const ctx = host.switchToWs();
+    const client = ctx.getClient<{
+      emit: (event: string, data: unknown) => void;
+    }>();
+    client.emit('exception', {
       code: exception.code,
       message: exception.message,
     });

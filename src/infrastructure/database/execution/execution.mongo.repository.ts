@@ -16,8 +16,12 @@ export class ExecutionMongoRepository implements ExecutionRepository {
   ) {}
 
   async createExecution(execution: Execution): Promise<boolean> {
-    await this.model.create(this.mapper.mapTo(execution));
-    return true;
+    try {
+      await this.model.create(this.mapper.mapTo(execution));
+      return true;
+    } catch {
+      return false;
+    }
   }
 
   async updateExecution(execution: Execution): Promise<Execution | null> {

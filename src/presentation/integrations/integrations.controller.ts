@@ -72,11 +72,15 @@ export class IntegrationsController {
     @Param('id') id: string,
     @Body() body: UpdateIntegrationRequestDto,
   ): Promise<Schema> {
+    const existing = await this.getPipelineByIdUseCase.execute({ id });
+    if (!existing) {
+      throw new NotFoundException(`Integration ${id} not found`);
+    }
     const pipeline = await this.updatePipelineUseCase.execute({
       id,
       name: body.name,
       description: body.description,
-      status: body.status,
+      status: body.status ?? existing.status,
       steps: body.steps.map((s) => new Step(s.id, s.kind, s.config)),
     });
     if (!pipeline) {

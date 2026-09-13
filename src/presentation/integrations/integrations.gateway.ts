@@ -84,11 +84,17 @@ export class IntegrationsGateway implements OnGatewayInit {
   async handleUpdate(
     @MessageBody() body: { id: string } & UpdateIntegrationRequestDto,
   ): Promise<Schema> {
+    const existing = await this.getPipelineByIdUseCase.execute({
+      id: body.id,
+    });
+    if (!existing) {
+      throw new WsException(`Integration ${body.id} not found`);
+    }
     const pipeline = await this.updatePipelineUseCase.execute({
       id: body.id,
       name: body.name,
       description: body.description,
-      status: body.status,
+      status: body.status ?? existing.status,
       steps: body.steps.map((s) => new Step(s.id, s.kind, s.config)),
     });
     if (!pipeline) {

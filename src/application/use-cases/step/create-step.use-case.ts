@@ -4,7 +4,7 @@ import { CreateStepDTO } from '@/application/dtos/step/create-step.dto';
 import { StepRepository } from '@/application/repositories/step.repository';
 import { STEP_REPOSITORY } from '@/application/tokens';
 import { Step } from '@/domain/entities/step';
-import { generateID } from '@/infrastructure/utils/StringUtils';
+import { generateID } from '@/shared/utils/StringUtils';
 
 @Injectable()
 export class CreateStepUseCase {

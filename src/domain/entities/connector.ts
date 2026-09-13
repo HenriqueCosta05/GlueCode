@@ -6,7 +6,7 @@ import {
 } from '@/@types/domain';
 import { ConnectorId, PipelineId } from '@/@types/IDs';
 import { Pipeline } from './pipeline';
-import { generateID } from '@/infrastructure/utils/StringUtils';
+import { generateID } from '@/shared/utils/StringUtils';
 import { Step } from './step';
 import { StepKind } from '@/@types/enums';
 import { Entity } from '@/base/entity';

@@ -3,7 +3,7 @@ import { CreatePipelineDTO } from '@/application/dtos/pipeline/create-pipeline.d
 import { PipelineRepository } from '@/application/repositories/pipeline.repository';
 import { PIPELINE_REPOSITORY } from '@/application/tokens';
 import { Pipeline } from '@/domain/entities/pipeline';
-import { generateID } from '@/infrastructure/utils/StringUtils';
+import { generateID } from '@/shared/utils/StringUtils';
 
 @Injectable()
 export class CreatePipelineUseCase {

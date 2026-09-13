@@ -4,6 +4,8 @@ import { Job } from 'bullmq';
 import { GetExecutionByIdUseCase } from '@/application/use-cases/execution/get-execution-by-id.use-case';
 import { UpdateExecutionUseCase } from '@/application/use-cases/execution/update-execution.use-case';
 import { GetPipelineByIdUseCase } from '@/application/use-cases/pipeline/get-pipeline-by-id.use-case';
+import { UpdatePipelineUseCase } from '@/application/use-cases/pipeline/update-pipeline.use-case';
+import { Pipeline } from '@/domain/entities/pipeline';
 import { LoggerPort } from '@/application/ports/logger.port';
 import {
   LOGGER_PORT,
@@ -15,12 +17,15 @@ import { StepExecutorRegistry } from '@/infrastructure/execution/step-executor.r
 export type PipelineExecutionJobData = { executionId: string };
 
 @Injectable()
-@Processor(PIPELINE_EXECUTION_QUEUE)
+@Processor(PIPELINE_EXECUTION_QUEUE, {
+  concurrency: Number(process.env.PIPELINE_EXECUTION_CONCURRENCY ?? 5),
+})
 export class PipelineExecutionProcessor extends WorkerHost {
   constructor(
     private readonly getExecutionById: GetExecutionByIdUseCase,
     private readonly updateExecution: UpdateExecutionUseCase,
     private readonly getPipelineById: GetPipelineByIdUseCase,
+    private readonly updatePipeline: UpdatePipelineUseCase,
     @Inject(STEP_EXECUTOR_REGISTRY)
     private readonly executors: StepExecutorRegistry,
     @Inject(LOGGER_PORT) private readonly logger: LoggerPort,
@@ -65,6 +70,7 @@ export class PipelineExecutionProcessor extends WorkerHost {
         pipeline.markFailed(index, `Step ${step.id} failed`);
         execution.updateExecutionStatus('FAILED');
         await this.persist(execution);
+        await this.persistPipeline(pipeline);
         return;
       }
 
@@ -76,6 +82,7 @@ export class PipelineExecutionProcessor extends WorkerHost {
     pipeline.markCompleted();
     execution.updateExecutionStatus('COMPLETED');
     await this.persist(execution);
+    await this.persistPipeline(pipeline);
   }
 
   private async persist(execution: {
@@ -91,6 +98,16 @@ export class PipelineExecutionProcessor extends WorkerHost {
       status: execution.status,
       startedAt: execution.startedAt,
       completedAt: execution.completedAt,
+    });
+  }
+
+  private async persistPipeline(pipeline: Pipeline): Promise<void> {
+    await this.updatePipeline.execute({
+      id: pipeline.id,
+      steps: pipeline.getSteps(),
+      status: pipeline.status,
+      name: pipeline.name,
+      description: pipeline.description,
     });
   }
 }

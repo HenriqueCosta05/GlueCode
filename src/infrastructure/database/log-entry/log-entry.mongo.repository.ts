@@ -16,8 +16,12 @@ export class LogEntryMongoRepository implements LogEntryRepository {
   ) {}
 
   async createLogEntry(logEntry: LogEntry): Promise<boolean> {
-    await this.model.create(this.mapper.mapTo(logEntry));
-    return true;
+    try {
+      await this.model.create(this.mapper.mapTo(logEntry));
+      return true;
+    } catch {
+      return false;
+    }
   }
 
   async deleteLogEntry(logEntry: LogEntry): Promise<boolean> {

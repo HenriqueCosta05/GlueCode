@@ -10,9 +10,20 @@ function buildHost() {
   const status = jest.fn().mockReturnValue({ json });
   const response = { status };
   const host = {
+    getType: () => 'http',
     switchToHttp: () => ({ getResponse: () => response }),
   } as unknown as ArgumentsHost;
   return { host, status, json };
+}
+
+function buildWsHost() {
+  const emit = jest.fn();
+  const client = { emit };
+  const host = {
+    getType: () => 'ws',
+    switchToWs: () => ({ getClient: () => client }),
+  } as unknown as ArgumentsHost;
+  return { host, emit };
 }
 
 describe('DomainExceptionFilter', () => {
@@ -37,5 +48,18 @@ describe('DomainExceptionFilter', () => {
     filter.catch(new InvalidPipelineError('needs a step'), host);
 
     expect(status).toHaveBeenCalledWith(400);
+  });
+
+  it('does not call HTTP-only methods for a non-HTTP (WS) context, and emits an exception event instead', () => {
+    const { host, emit } = buildWsHost();
+
+    expect(() =>
+      filter.catch(new InvalidPipelineError('needs a step'), host),
+    ).not.toThrow();
+
+    expect(emit).toHaveBeenCalledWith('exception', {
+      code: 'INVALID_PIPELINE',
+      message: 'needs a step',
+    });
   });
 });

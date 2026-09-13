@@ -3,7 +3,7 @@ import { CreateLogEntryDTO } from '@/application/dtos/log-entry/create-log-entry
 import { LogEntryRepository } from '@/application/repositories/log-entry.repository';
 import { LOG_ENTRY_REPOSITORY } from '@/application/tokens';
 import { LogEntry } from '@/domain/entities/log-entry';
-import { generateID } from '@/infrastructure/utils/StringUtils';
+import { generateID } from '@/shared/utils/StringUtils';
 
 @Injectable()
 export class CreateLogEntryUseCase {

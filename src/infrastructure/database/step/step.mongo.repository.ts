@@ -16,8 +16,12 @@ export class StepMongoRepository implements StepRepository {
   ) {}
 
   async createStep(step: Step): Promise<boolean> {
-    await this.model.create(this.mapper.mapTo(step));
-    return true;
+    try {
+      await this.model.create(this.mapper.mapTo(step));
+      return true;
+    } catch {
+      return false;
+    }
   }
 
   async updateStep(step: Step): Promise<Step | null> {

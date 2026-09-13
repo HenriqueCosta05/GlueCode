@@ -3,7 +3,7 @@ import { CreateExecutionDTO } from '@/application/dtos/execution/create-executio
 import { ExecutionRepository } from '@/application/repositories/execution.repository';
 import { EXECUTION_REPOSITORY } from '@/application/tokens';
 import { Execution } from '@/domain/entities/execution';
-import { generateID } from '@/infrastructure/utils/StringUtils';
+import { generateID } from '@/shared/utils/StringUtils';
 
 @Injectable()
 export class CreateExecutionUseCase {

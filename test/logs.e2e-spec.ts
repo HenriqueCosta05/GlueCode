@@ -60,4 +60,10 @@ describe('LogsController (e2e)', () => {
 
     await request(app.getHttpServer()).get(`/logs/${id}`).expect(404);
   });
+
+  it('returns 404 when deleting a log entry that does not exist', async () => {
+    await request(app.getHttpServer())
+      .delete('/logs/does-not-exist')
+      .expect(404);
+  });
 });

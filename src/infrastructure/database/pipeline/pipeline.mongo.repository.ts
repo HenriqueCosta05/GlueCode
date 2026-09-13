@@ -16,8 +16,12 @@ export class PipelineMongoRepository implements PipelineRepository {
   ) {}
 
   async createPipeline(pipeline: Pipeline): Promise<boolean> {
-    await this.model.create(this.mapper.mapTo(pipeline));
-    return true;
+    try {
+      await this.model.create(this.mapper.mapTo(pipeline));
+      return true;
+    } catch {
+      return false;
+    }
   }
 
   async updatePipeline(pipeline: Pipeline): Promise<Pipeline | null> {

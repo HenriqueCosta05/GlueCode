@@ -16,8 +16,12 @@ export class ConnectorMongoRepository implements ConnectorRepository {
   ) {}
 
   async createConnector(connector: Connector): Promise<boolean> {
-    await this.model.create(this.mapper.mapTo(connector));
-    return true;
+    try {
+      await this.model.create(this.mapper.mapTo(connector));
+      return true;
+    } catch {
+      return false;
+    }
   }
 
   async updateConnector(connector: Connector): Promise<Connector | null> {
