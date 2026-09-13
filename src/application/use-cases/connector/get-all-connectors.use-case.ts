@@ -1,8 +1,14 @@
+import { Inject, Injectable } from '@nestjs/common';
 import { ConnectorRepository } from '@/application/repositories/connector.repository';
+import { CONNECTOR_REPOSITORY } from '@/application/tokens';
 import { Connector } from '@/domain/entities/connector';
 
+@Injectable()
 export class GetAllConnectorsUseCase {
-  constructor(private readonly connectorRepository: ConnectorRepository) {}
+  constructor(
+    @Inject(CONNECTOR_REPOSITORY)
+    private readonly connectorRepository: ConnectorRepository,
+  ) {}
 
   public async execute(): Promise<Connector[]> {
     const connectors = await this.connectorRepository.getAllConnectors();

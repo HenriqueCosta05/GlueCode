@@ -1,10 +1,16 @@
+import { Inject, Injectable } from '@nestjs/common';
 import { CreateConnectorDTO } from '@/application/dtos/connector/create-connector.dto';
 import { ConnectorRepository } from '@/application/repositories/connector.repository';
+import { CONNECTOR_REPOSITORY } from '@/application/tokens';
 import { Connector } from '@/domain/entities/connector';
 import { generateID } from '@/infrastructure/utils/StringUtils';
 
+@Injectable()
 export class CreateConnectorUseCase {
-  constructor(private readonly connectorRepository: ConnectorRepository) {}
+  constructor(
+    @Inject(CONNECTOR_REPOSITORY)
+    private readonly connectorRepository: ConnectorRepository,
+  ) {}
 
   public async execute(request: CreateConnectorDTO): Promise<boolean> {
     const { source, schema, mapping, destination, auth } = request;

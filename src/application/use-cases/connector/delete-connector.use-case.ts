@@ -1,9 +1,15 @@
+import { Inject, Injectable } from '@nestjs/common';
 import { DeleteConnectorDTO } from '@/application/dtos/connector/delete-connector.dto';
 import { ConnectorRepository } from '@/application/repositories/connector.repository';
+import { CONNECTOR_REPOSITORY } from '@/application/tokens';
 import { ConnectorNotFoundError } from '@/shared/errors/domain';
 
+@Injectable()
 export class DeleteConnectorUseCase {
-  constructor(private readonly connectorRepository: ConnectorRepository) {}
+  constructor(
+    @Inject(CONNECTOR_REPOSITORY)
+    private readonly connectorRepository: ConnectorRepository,
+  ) {}
 
   public async execute(request: DeleteConnectorDTO): Promise<boolean> {
     const { id } = request;
