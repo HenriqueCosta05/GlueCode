@@ -1,9 +1,15 @@
+import { Inject, Injectable } from '@nestjs/common';
 import { GetPipelineByIdDTO } from '@/application/dtos/pipeline/get-pipeline-by-id.dto';
 import { PipelineRepository } from '@/application/repositories/pipeline.repository';
+import { PIPELINE_REPOSITORY } from '@/application/tokens';
 import { Pipeline } from '@/domain/entities/pipeline';
 
+@Injectable()
 export class GetPipelineByIdUseCase {
-  constructor(private readonly pipelineRepository: PipelineRepository) {}
+  constructor(
+    @Inject(PIPELINE_REPOSITORY)
+    private readonly pipelineRepository: PipelineRepository,
+  ) {}
 
   public async execute(request: GetPipelineByIdDTO): Promise<Pipeline | null> {
     const { id } = request;

@@ -9,10 +9,16 @@ export class Pipeline extends Entity {
     public readonly id: PipelineId,
     private readonly steps: Step[],
     public status: PipelineStatus = PipelineStatus.IDLE,
+    public name?: string,
+    public description?: string,
   ) {
     if (steps.length === 0)
       throw new InvalidPipelineError('A pipeline must have at least one step.');
     super();
+  }
+
+  getSteps(): Step[] {
+    return [...this.steps];
   }
 
   nextStep(currentIndex: number): Step | null {

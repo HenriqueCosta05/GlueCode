@@ -1,9 +1,15 @@
+import { Inject, Injectable } from '@nestjs/common';
 import { DeletePipelineDTO } from '@/application/dtos/pipeline/delete-pipeline.dto';
 import { PipelineRepository } from '@/application/repositories/pipeline.repository';
+import { PIPELINE_REPOSITORY } from '@/application/tokens';
 import { PipelineNotFoundError } from '@/shared/errors/domain';
 
+@Injectable()
 export class DeletePipelineUseCase {
-  constructor(private readonly pipelineRepository: PipelineRepository) {}
+  constructor(
+    @Inject(PIPELINE_REPOSITORY)
+    private readonly pipelineRepository: PipelineRepository,
+  ) {}
 
   public async execute(request: DeletePipelineDTO): Promise<boolean> {
     const { id } = request;

@@ -6,4 +6,6 @@ export interface UpdatePipelineDTO {
   id: PipelineId;
   steps: Step[];
   status?: PipelineStatus;
+  name?: string;
+  description?: string;
 }

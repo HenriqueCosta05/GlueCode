@@ -4,4 +4,6 @@ import { Step } from '@/domain/entities/step';
 export interface CreatePipelineDTO {
   steps: Step[];
   status?: PipelineStatus;
+  name?: string;
+  description?: string;
 }
