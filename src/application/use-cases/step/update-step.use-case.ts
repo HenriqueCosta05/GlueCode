@@ -1,0 +1,17 @@
+import { UpdateStepDTO } from '@/application/dtos/step/update-step.dto';
+import { StepRepository } from '@/application/repositories/step.repository';
+import { Step } from '@/domain/entities/step';
+
+export class UpdateStepUseCase {
+  constructor(private readonly stepRepository: StepRepository) {}
+
+  public async execute(request: UpdateStepDTO): Promise<Step | null> {
+    const { id, kind, config } = request;
+
+    const step = new Step(id, kind, config);
+
+    const updated = await this.stepRepository.updateStep(step);
+
+    return updated;
+  }
+}

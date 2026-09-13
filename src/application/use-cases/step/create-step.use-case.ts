@@ -1,0 +1,21 @@
+import { StepConfig } from '@/@types/domain';
+import { CreateStepDTO } from '@/application/dtos/step/create-step.dto';
+import { StepRepository } from '@/application/repositories/step.repository';
+import { Step } from '@/domain/entities/step';
+import { generateID } from '@/infrastructure/utils/StringUtils';
+
+export class CreateStepUseCase {
+  constructor(private readonly stepRepository: StepRepository) {}
+
+  public async execute(request: CreateStepDTO): Promise<boolean> {
+    const { kind, config } = request;
+
+    const id = generateID();
+
+    const step = new Step(id, kind, config as unknown as StepConfig);
+
+    const created = await this.stepRepository.createStep(step);
+
+    return created;
+  }
+}
