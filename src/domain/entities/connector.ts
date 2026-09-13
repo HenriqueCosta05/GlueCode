@@ -1,23 +1,60 @@
-import { AuthSpec, EndpointSpec, FieldMapping } from '@/@types/domain';
-import { ConnectorId } from '@/@types/IDs';
-// import { Pipeline } from "./pipeline";
-// import { generatePipelineId } from "@/infrastructure/utils/StringUtils";
+import {
+  AuthSpec,
+  EndpointSpec,
+  FieldMapping,
+  JsonSchema,
+} from '@/@types/domain';
+import { ConnectorId, PipelineId } from '@/@types/IDs';
+import { Pipeline } from './pipeline';
+import { generateID } from '@/infrastructure/utils/StringUtils';
+import { Step } from './step';
+import { StepKind } from '@/@types/enums';
+import { Entity } from '@/base/entity';
 
-export class ConnectorDefinition {
+export class Connector extends Entity {
   constructor(
     readonly id: ConnectorId,
     readonly source: EndpointSpec,
+    readonly schema: JsonSchema,
     readonly mapping: FieldMapping[],
     readonly destination: EndpointSpec,
     readonly auth: AuthSpec,
-  ) {}
+  ) {
+    super();
+  }
 
-  // toPipeline(): Pipeline {
-  //   return new Pipeline(
-  //     generatePipelineId() as PipelineId,
-  //     [
-  //       // Step 1: Receive data from source
-  //     ]
-  //   );
-  // }
+  createPipeline(): Pipeline {
+    const pipelineId: PipelineId = generateID();
+
+    const steps: Step[] = [
+      // RECEIVER
+      new Step(`${pipelineId}-receive`, StepKind.RECEIVE, {
+        source: this.source,
+        kind: StepKind.RECEIVE,
+      }),
+      // VALIDATOR
+      new Step(`${pipelineId}-validate`, StepKind.VALIDATE, {
+        schema: this.schema,
+        kind: StepKind.VALIDATE,
+      }),
+      // TRANSFORMER
+      new Step(`${pipelineId}-transform`, StepKind.TRANSFORM, {
+        mapping: this.mapping,
+        kind: StepKind.TRANSFORM,
+      }),
+      // DISPATCHER
+      new Step(`${pipelineId}-dispatch`, StepKind.DISPATCH, {
+        destination: this.destination,
+        kind: StepKind.DISPATCH,
+        auth: this.auth,
+      }),
+      // LOGGER
+      new Step(`${pipelineId}-log`, StepKind.LOG, {
+        kind: StepKind.LOG,
+        level: 'info',
+      }),
+    ];
+
+    return new Pipeline(pipelineId, steps);
+  }
 }
