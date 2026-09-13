@@ -1,9 +1,14 @@
+import { Inject, Injectable } from '@nestjs/common';
 import { DeleteStepDTO } from '@/application/dtos/step/delete-step.dto';
 import { StepRepository } from '@/application/repositories/step.repository';
+import { STEP_REPOSITORY } from '@/application/tokens';
 import { StepNotFoundError } from '@/shared/errors/domain';
 
+@Injectable()
 export class DeleteStepUseCase {
-  constructor(private readonly stepRepository: StepRepository) {}
+  constructor(
+    @Inject(STEP_REPOSITORY) private readonly stepRepository: StepRepository,
+  ) {}
 
   public async execute(request: DeleteStepDTO): Promise<boolean> {
     const { id } = request;
