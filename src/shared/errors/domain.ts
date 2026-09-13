@@ -23,3 +23,7 @@ export class ConnectorNotFoundError extends DomainError {
 export class ExecutionNotFoundError extends DomainError {
   readonly code = 'EXECUTION_NOT_FOUND';
 }
+
+export class LogEntryNotFoundError extends DomainError {
+  readonly code = 'LOG_ENTRY_NOT_FOUND';
+}
