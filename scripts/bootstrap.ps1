@@ -140,6 +140,29 @@ Node v$((node -v).TrimStart('v')) é antigo demais: o projeto exige >= 22.x.
 Write-Ok "node instalado na versão $(node -v)"
 
 # --------------------------------------------------------------------------
+# 2. Arquivo de ambiente
+# --------------------------------------------------------------------------
+# A aplicação depende de MONGODB_URI e REDIS_URL (ver .env.example). Sem um
+# .env, o NestJS cai nos defaults hardcoded em código — o que funciona para
+# Docker Compose (mongo/redis por nome de serviço), mas não para rodar fora
+# dele. Criar o .env aqui evita esse silêncio.
+Write-Step 'Arquivo de ambiente'
+
+$envExample = Join-Path $ProjectRoot '.env.example'
+$envFile = Join-Path $ProjectRoot '.env'
+
+if (-not (Test-Path $envFile)) {
+  if (Test-Path $envExample) {
+    Copy-Item $envExample $envFile
+    Write-Ok 'criado .env a partir de .env.example'
+  } else {
+    Write-Info '.env.example não encontrado — pulando'
+  }
+} else {
+  Write-Ok '.env já existe'
+}
+
+# --------------------------------------------------------------------------
 # 3. Limpeza opcional
 # --------------------------------------------------------------------------
 if ($Clean) {
@@ -180,14 +203,102 @@ if (-not $SkipVerify) {
 }
 
 # --------------------------------------------------------------------------
+# 6. Dependências externas (MongoDB / Redis)
+# --------------------------------------------------------------------------
+# A aplicação não sobe sem Mongo e Redis alcançáveis — DatabaseModule e
+# QueueModule conectam de verdade no boot, não sob demanda. Isso só importa
+# para rodar a aplicação (dev/smoke): os testes usam mongodb-memory-server e
+# não tocam essas portas.
+
+function Test-TcpPort($HostName, $Port, $TimeoutMs = 1000) {
+  $client = New-Object System.Net.Sockets.TcpClient
+  try {
+    $task = $client.ConnectAsync($HostName, $Port)
+    if (-not $task.Wait($TimeoutMs)) {
+      return $false
+    }
+    return $client.Connected
+  } catch {
+    return $false
+  } finally {
+    $client.Close()
+  }
+}
+
+function Get-DockerComposeCommand {
+  if (Get-Command docker -ErrorAction SilentlyContinue) {
+    docker compose version *> $null
+    if ($LASTEXITCODE -eq 0) {
+      return 'docker compose'
+    }
+  }
+
+  if (Get-Command docker-compose -ErrorAction SilentlyContinue) {
+    return 'docker-compose'
+  }
+
+  return $null
+}
+
+function Resolve-ExternalDependencies {
+  Write-Step 'Dependências externas (MongoDB / Redis)'
+
+  $mongoUp = Test-TcpPort '127.0.0.1' 27017
+  $redisUp = Test-TcpPort '127.0.0.1' 6379
+
+  if ($mongoUp -and $redisUp) {
+    Write-Ok 'MongoDB (27017) e Redis (6379) já estão de pé'
+    return
+  }
+
+  $compose = Get-DockerComposeCommand
+
+  if (-not $compose) {
+    Stop-With @"
+MongoDB e/ou Redis não estão alcançáveis em localhost, e o Docker não foi
+encontrado para subi-los automaticamente.
+
+Suba-os manualmente (ex.: mongod e redis-server instalados localmente), ou
+instale o Docker Desktop e rode:
+  docker compose up -d mongo redis
+"@
+  }
+
+  Write-Info "subindo dependências via '$compose up -d mongo redis'"
+  Push-Location $ProjectRoot
+  try {
+    Invoke-Expression "$compose up -d mongo redis"
+    if ($LASTEXITCODE -ne 0) {
+      Stop-With "'$compose up -d mongo redis' falhou (exit $LASTEXITCODE)."
+    }
+  } finally {
+    Pop-Location
+  }
+
+  Write-Info 'aguardando MongoDB e Redis responderem...'
+  $deadline = (Get-Date).AddSeconds(60)
+  while ((Get-Date) -lt $deadline) {
+    if ((Test-TcpPort '127.0.0.1' 27017) -and (Test-TcpPort '127.0.0.1' 6379)) {
+      Write-Ok 'MongoDB e Redis prontos'
+      return
+    }
+    Start-Sleep -Seconds 2
+  }
+
+  Stop-With 'MongoDB e/ou Redis não responderam em 60s. Verifique: docker compose logs mongo redis'
+}
+
+# --------------------------------------------------------------------------
 # 7. DEV
 # --------------------------------------------------------------------------
 if ($NoDev) {
   Write-Step 'Pronto'
-  Write-Info 'suba a aplicação com: npm run dev'
+  Write-Info 'suba a aplicação com: npm run start:dev'
   exit 0
 }
 
+Resolve-ExternalDependencies
+
 Write-Step 'Subindo em DEV'
 
-npm run dev
+npm run start:dev
