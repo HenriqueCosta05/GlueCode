@@ -3,10 +3,12 @@
 ARG NODE_VERSION=22-alpine
 
 # ---- deps: install once, reused by build and (via cache) never shipped ----
+# --ignore-scripts: package.json's "prepare" script runs husky, which expects
+# a .git directory that doesn't exist in the build context (and shouldn't).
 FROM node:${NODE_VERSION} AS deps
 WORKDIR /app
 COPY package.json package-lock.json ./
-RUN npm ci
+RUN npm ci --ignore-scripts
 
 # ---- build: compile TypeScript to dist/ ----
 FROM node:${NODE_VERSION} AS build
@@ -20,7 +22,7 @@ FROM node:${NODE_VERSION} AS runtime
 WORKDIR /app
 ENV NODE_ENV=production
 COPY package.json package-lock.json ./
-RUN npm ci --omit=dev && npm cache clean --force
+RUN npm ci --omit=dev --ignore-scripts && npm cache clean --force
 COPY --from=build /app/dist ./dist
 
 EXPOSE 3000
