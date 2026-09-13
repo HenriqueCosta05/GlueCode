@@ -1,9 +1,15 @@
+import { Inject, Injectable } from '@nestjs/common';
 import { GetExecutionByIdDTO } from '@/application/dtos/execution/get-execution-by-id.dto';
 import { ExecutionRepository } from '@/application/repositories/execution.repository';
+import { EXECUTION_REPOSITORY } from '@/application/tokens';
 import { Execution } from '@/domain/entities/execution';
 
+@Injectable()
 export class GetExecutionByIdUseCase {
-  constructor(private readonly executionRepository: ExecutionRepository) {}
+  constructor(
+    @Inject(EXECUTION_REPOSITORY)
+    private readonly executionRepository: ExecutionRepository,
+  ) {}
 
   public async execute(
     request: GetExecutionByIdDTO,

@@ -1,9 +1,15 @@
+import { Inject, Injectable } from '@nestjs/common';
 import { DeleteExecutionDTO } from '@/application/dtos/execution/delete-execution.dto';
 import { ExecutionRepository } from '@/application/repositories/execution.repository';
+import { EXECUTION_REPOSITORY } from '@/application/tokens';
 import { ExecutionNotFoundError } from '@/shared/errors/domain';
 
+@Injectable()
 export class DeleteExecutionUseCase {
-  constructor(private readonly executionRepository: ExecutionRepository) {}
+  constructor(
+    @Inject(EXECUTION_REPOSITORY)
+    private readonly executionRepository: ExecutionRepository,
+  ) {}
 
   public async execute(request: DeleteExecutionDTO): Promise<boolean> {
     const { id } = request;
