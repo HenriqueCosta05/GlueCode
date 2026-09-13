@@ -85,7 +85,10 @@
       "**/*.(t|j)s"
     ],
     "coverageDirectory": "../coverage",
-    "testEnvironment": "node"
+    "testEnvironment": "node",
+    "transformIgnorePatterns": [
+      "node_modules/(?!(@nestjs|mongoose|mongodb|ioredis|bullmq|socket\\.io)/)"
+    ]
   },
   "lint-staged": {
     "*.{ts,js}": [
