@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { DeleteExecutionDTO } from '@/application/dtos/execution/delete-execution.dto';
-import { ExecutionRepository } from '@/application/repositories/execution.repository';
+import type { ExecutionRepository } from '@/application/repositories/execution.repository';
 import { EXECUTION_REPOSITORY } from '@/application/tokens';
 import { ExecutionNotFoundError } from '@/shared/errors/domain';
 

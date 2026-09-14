@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { UpdateStepDTO } from '@/application/dtos/step/update-step.dto';
-import { StepRepository } from '@/application/repositories/step.repository';
+import type { StepRepository } from '@/application/repositories/step.repository';
 import { STEP_REPOSITORY } from '@/application/tokens';
 import { Step } from '@/domain/entities/step';
 

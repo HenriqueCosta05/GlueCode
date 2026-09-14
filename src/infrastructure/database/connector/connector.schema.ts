@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
-import {
+import type {
   AuthSpec,
   EndpointSpec,
   FieldMapping,

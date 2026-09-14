@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
-import { LogLevel } from '@/domain/entities/log-entry';
+import type { LogLevel } from '@/domain/entities/log-entry';
 
 @Schema({ collection: 'logs', timestamps: true, _id: false })
 export class LogEntrySchemaClass {

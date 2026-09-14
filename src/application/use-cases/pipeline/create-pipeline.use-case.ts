@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { CreatePipelineDTO } from '@/application/dtos/pipeline/create-pipeline.dto';
-import { PipelineRepository } from '@/application/repositories/pipeline.repository';
+import type { PipelineRepository } from '@/application/repositories/pipeline.repository';
 import { PIPELINE_REPOSITORY } from '@/application/tokens';
 import { Pipeline } from '@/domain/entities/pipeline';
 import { generateID } from '@/shared/utils/StringUtils';

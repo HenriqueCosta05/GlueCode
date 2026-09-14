@@ -6,13 +6,13 @@ import { UpdateExecutionUseCase } from '@/application/use-cases/execution/update
 import { GetPipelineByIdUseCase } from '@/application/use-cases/pipeline/get-pipeline-by-id.use-case';
 import { UpdatePipelineUseCase } from '@/application/use-cases/pipeline/update-pipeline.use-case';
 import { Pipeline } from '@/domain/entities/pipeline';
-import { LoggerPort } from '@/application/ports/logger.port';
+import type { LoggerPort } from '@/application/ports/logger.port';
 import {
   LOGGER_PORT,
   PIPELINE_EXECUTION_QUEUE,
   STEP_EXECUTOR_REGISTRY,
 } from '@/application/tokens';
-import { StepExecutorRegistry } from '@/infrastructure/execution/step-executor.registry';
+import type { StepExecutorRegistry } from '@/infrastructure/execution/step-executor.registry';
 
 export type PipelineExecutionJobData = { executionId: string };
 

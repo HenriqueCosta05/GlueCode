@@ -3,8 +3,14 @@ import { StepKind, PipelineStatus } from '@/@types/enums';
 import { Pipeline } from '@/domain/entities/pipeline';
 import { Step, StepResult } from '@/domain/entities/step';
 import { Execution } from '@/domain/entities/execution';
+import { GetExecutionByIdDTO } from '@/application/dtos/execution/get-execution-by-id.dto';
 import { UpdateExecutionDTO } from '@/application/dtos/execution/update-execution.dto';
+import { GetPipelineByIdDTO } from '@/application/dtos/pipeline/get-pipeline-by-id.dto';
 import { UpdatePipelineDTO } from '@/application/dtos/pipeline/update-pipeline.dto';
+import { GetExecutionByIdUseCase } from '@/application/use-cases/execution/get-execution-by-id.use-case';
+import { UpdateExecutionUseCase } from '@/application/use-cases/execution/update-execution.use-case';
+import { GetPipelineByIdUseCase } from '@/application/use-cases/pipeline/get-pipeline-by-id.use-case';
+import { UpdatePipelineUseCase } from '@/application/use-cases/pipeline/update-pipeline.use-case';
 import { StepExecutor } from '@/infrastructure/execution/step-executor';
 import { StepExecutorRegistry } from '@/infrastructure/execution/step-executor.registry';
 import {
@@ -18,33 +24,46 @@ function buildProcessor(overrides: {
   executors: StepExecutorRegistry;
 }) {
   const getExecutionById = {
-    execute: jest.fn().mockResolvedValue(overrides.execution),
-  };
+    execute: jest
+      .fn<Promise<Execution | null>, [GetExecutionByIdDTO]>()
+      .mockResolvedValue(overrides.execution),
+  } as unknown as GetExecutionByIdUseCase;
   const updateExecution = {
     execute: jest
       .fn<Promise<Execution | null>, [UpdateExecutionDTO]>()
       .mockResolvedValue(overrides.execution),
-  };
+  } as unknown as UpdateExecutionUseCase;
   const getPipelineById = {
-    execute: jest.fn().mockResolvedValue(overrides.pipeline),
-  };
+    execute: jest
+      .fn<Promise<Pipeline | null>, [GetPipelineByIdDTO]>()
+      .mockResolvedValue(overrides.pipeline),
+  } as unknown as GetPipelineByIdUseCase;
   const updatePipeline = {
     execute: jest
       .fn<Promise<Pipeline | null>, [UpdatePipelineDTO]>()
       .mockResolvedValue(overrides.pipeline),
-  };
+  } as unknown as UpdatePipelineUseCase;
   const logger = { log: jest.fn().mockResolvedValue(undefined) };
 
   const processor = new PipelineExecutionProcessor(
-    getExecutionById as any,
-    updateExecution as any,
-    getPipelineById as any,
-    updatePipeline as any,
+    getExecutionById,
+    updateExecution,
+    getPipelineById,
+    updatePipeline,
     overrides.executors,
     logger,
   );
 
-  return { processor, updateExecution, updatePipeline, logger };
+  return {
+    processor,
+    updateExecution: updateExecution as unknown as {
+      execute: jest.Mock<Promise<Execution | null>, [UpdateExecutionDTO]>;
+    },
+    updatePipeline: updatePipeline as unknown as {
+      execute: jest.Mock<Promise<Pipeline | null>, [UpdatePipelineDTO]>;
+    },
+    logger,
+  };
 }
 
 describe('PipelineExecutionProcessor', () => {
@@ -116,11 +135,11 @@ describe('PipelineExecutionProcessor', () => {
     const receiveStep = new Step('s1', StepKind.RECEIVE, {
       kind: StepKind.RECEIVE,
       source: { url: 'https://example.com', method: 'GET' },
-    } as any);
+    });
     const transformStep = new Step('s2', StepKind.TRANSFORM, {
       kind: StepKind.TRANSFORM,
       mapping: [],
-    } as any);
+    });
     const logStep = new Step('s3', StepKind.LOG, {
       kind: StepKind.LOG,
       level: 'info',

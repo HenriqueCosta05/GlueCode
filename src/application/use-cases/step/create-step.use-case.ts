@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { StepConfig } from '@/@types/domain';
 import { CreateStepDTO } from '@/application/dtos/step/create-step.dto';
-import { StepRepository } from '@/application/repositories/step.repository';
+import type { StepRepository } from '@/application/repositories/step.repository';
 import { STEP_REPOSITORY } from '@/application/tokens';
 import { Step } from '@/domain/entities/step';
 import { generateID } from '@/shared/utils/StringUtils';

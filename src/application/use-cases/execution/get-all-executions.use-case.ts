@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { ExecutionRepository } from '@/application/repositories/execution.repository';
+import type { ExecutionRepository } from '@/application/repositories/execution.repository';
 import { EXECUTION_REPOSITORY } from '@/application/tokens';
 import { Execution } from '@/domain/entities/execution';
 

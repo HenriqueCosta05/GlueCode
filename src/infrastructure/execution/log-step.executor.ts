@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { StepKind } from '@/@types/enums';
 import { Step, StepResult } from '@/domain/entities/step';
-import { LoggerPort } from '@/application/ports/logger.port';
+import type { LoggerPort } from '@/application/ports/logger.port';
 import { LOGGER_PORT } from '@/application/tokens';
 import { StepExecutor } from './step-executor';
 

@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
-import { StepConfig } from '@/@types/domain';
+import type { StepConfig } from '@/@types/domain';
 import { StepKind } from '@/@types/enums';
 
 @Schema({ collection: 'steps', timestamps: true, _id: false })

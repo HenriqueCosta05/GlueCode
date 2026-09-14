@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { GetExecutionByIdDTO } from '@/application/dtos/execution/get-execution-by-id.dto';
-import { ExecutionRepository } from '@/application/repositories/execution.repository';
+import type { ExecutionRepository } from '@/application/repositories/execution.repository';
 import { EXECUTION_REPOSITORY } from '@/application/tokens';
 import { Execution } from '@/domain/entities/execution';
 

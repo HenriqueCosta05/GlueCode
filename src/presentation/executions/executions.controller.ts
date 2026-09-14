@@ -10,6 +10,7 @@ import {
 } from '@nestjs/common';
 import { InjectQueue } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';
+import { IsString } from 'class-validator';
 import { CreateExecutionUseCase } from '@/application/use-cases/execution/create-execution.use-case';
 import { GetExecutionByIdUseCase } from '@/application/use-cases/execution/get-execution-by-id.use-case';
 import { GetAllExecutionsUseCase } from '@/application/use-cases/execution/get-all-executions.use-case';
@@ -17,6 +18,7 @@ import { PIPELINE_EXECUTION_QUEUE } from '@/application/tokens';
 import { Execution } from '@/domain/entities/execution';
 
 export class CreateExecutionRequestDto {
+  @IsString()
   pipelineId!: string;
 }
 

@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { DeleteConnectorDTO } from '@/application/dtos/connector/delete-connector.dto';
-import { ConnectorRepository } from '@/application/repositories/connector.repository';
+import type { ConnectorRepository } from '@/application/repositories/connector.repository';
 import { CONNECTOR_REPOSITORY } from '@/application/tokens';
 import { ConnectorNotFoundError } from '@/shared/errors/domain';
 

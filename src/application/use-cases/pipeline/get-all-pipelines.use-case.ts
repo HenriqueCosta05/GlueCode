@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { PipelineRepository } from '@/application/repositories/pipeline.repository';
+import type { PipelineRepository } from '@/application/repositories/pipeline.repository';
 import { PIPELINE_REPOSITORY } from '@/application/tokens';
 import { Pipeline } from '@/domain/entities/pipeline';
 

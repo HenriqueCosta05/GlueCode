@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { LogEntryRepository } from '@/application/repositories/log-entry.repository';
+import type { LogEntryRepository } from '@/application/repositories/log-entry.repository';
 import { LOG_ENTRY_REPOSITORY } from '@/application/tokens';
 import { LogEntry } from '@/domain/entities/log-entry';
 

@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { UpdateConnectorDTO } from '@/application/dtos/connector/update-connector.dto';
-import { ConnectorRepository } from '@/application/repositories/connector.repository';
+import type { ConnectorRepository } from '@/application/repositories/connector.repository';
 import { CONNECTOR_REPOSITORY } from '@/application/tokens';
 import { Connector } from '@/domain/entities/connector';
 
